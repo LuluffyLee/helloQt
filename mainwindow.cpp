@@ -29,7 +29,6 @@ void MainWindow::on_pushButton_clicked()
 
 
 void MainWindow::open()
-//! [7] //! [8]
 {
     //if (maybeSave()) {
     QString fileName = QFileDialog::getOpenFileName(this);
