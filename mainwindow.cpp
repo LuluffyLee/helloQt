@@ -3,17 +3,18 @@
 #include "ui_mainwindow.h"
 #include "logindlg.h"
 #include <QtWidgets>
+#include <QObject>
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    createActions();
-    //createStatusBar();
 
     ui->setupUi(this);
     ui->pushButton->setText(tr("打开新窗口"));
+
+    QObject::connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(open()));
 }
 
 MainWindow::~MainWindow()
