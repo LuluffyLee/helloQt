@@ -76,9 +76,7 @@ void MainWindow::loadFile(const QString &fileName)
 //}
 
 
-
 void MainWindow::createActions()
-//! [17] //! [18]
 {
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -93,7 +91,7 @@ void MainWindow::createActions()
     //    fileMenu->addAction(newAct);
     //    fileToolBar->addAction(newAct);
 
-    //! [19]
+
     const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open_file_512px.png"));
     QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
@@ -101,7 +99,7 @@ void MainWindow::createActions()
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     fileMenu->addAction(openAct);
     fileToolBar->addAction(openAct);
-    //! [18] //! [19]
+
 
     const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
     QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
