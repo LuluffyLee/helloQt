@@ -35,3 +35,9 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     myresources.qrc
+
+INCLUDEPATH += E:\opencv\build\include \
+    E:\opencv\build\include\opencv \
+    E:\opencv\build\include\opencv2
+
+LIBS += E:\opencv\build\x64\vc14\lib\opencv_world310d.lib \

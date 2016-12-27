@@ -41,22 +41,14 @@ void MainWindow::open()
 void MainWindow::loadFile(const QString &fileName)
 //! [42] //! [43]
 {
-    QFile file(fileName);
-    if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("Cannot read file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(fileName), file.errorString()));
-        return;
-    }
+    //显示图片
+        QImage *image=new QImage(fileName);
 
-    QTextStream in(&file);
-#ifndef QT_NO_CURSOR
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
-    //textEdit->setPlainText(in.readAll());
-#ifndef QT_NO_CURSOR
-    QApplication::restoreOverrideCursor();
-#endif
+        QLabel *label=new QLabel(this);
+        label->setGeometry(0,0,500,500);
+        label->setPixmap(QPixmap::fromImage(*image));
+        //label->setPixmap(QPixmap("E:/Qt_Program/Chrysanthemum.jpg"));
+        label->show();
 
     //setCurrentFile(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
