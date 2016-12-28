@@ -16,17 +16,18 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     //MainWindow();
 
-    void loadFile(const QString &fileName);
+    void showImage(const QString &fileName);
+    void showNewImage(QImage &image);
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
     void open();
+    void count();
 
 private:
     Ui::MainWindow *ui;
-    void createActions();
-    void setCurrentFile(const QString &fileName);
+    QImage *image;
+    //QImage *MainWindow::greyScale(QImage *origin)();
 };
 
 #endif // MAINWINDOW_H

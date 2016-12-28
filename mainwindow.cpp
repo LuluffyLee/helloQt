@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "logindlg.h"
+#include "processresultdlg.h"
 #include <QtWidgets>
 #include <QObject>
 
@@ -12,163 +13,83 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 
     ui->setupUi(this);
-    ui->pushButton->setText(tr("打开新窗口"));
+    this->image = new QImage();
+    statusBar()->showMessage(tr("就绪"));
 
     QObject::connect(ui->actionOpen,SIGNAL(triggered()),this,SLOT(open()));
+    QObject::connect(ui->actionCount,SIGNAL(triggered()),this,SLOT(count()));
+
 }
 
 MainWindow::~MainWindow()
 {
+    delete image;
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::count()
 {
     QDialog *dlg = new QDialog(this);
     dlg->show();
+//    ProcessResultDlg *prdlg=new ProcessResultDlg();
+//    prdlg->show();
 }
 
 
 void MainWindow::open()
 {
-    //if (maybeSave()) {
-    QString fileName = QFileDialog::getOpenFileName(this);
+    QString fileName = QFileDialog::getOpenFileName(
+                this,"open image file",".",
+                "Image files (*.bmp *.jpg *.pbm *.pgm *.png *.ppm *.xbm *.xpm);;All files (*.*)");
     if (!fileName.isEmpty())
-    loadFile(fileName);
-    //}
+        showImage(fileName);
 }
 
-void MainWindow::loadFile(const QString &fileName)
-//! [42] //! [43]
+void MainWindow::showImage(const QString &fileName)
 {
     //显示图片
-        QImage *image=new QImage(fileName);
+    if(image->load(fileName))
+    {
+        statusBar()->showMessage(tr("加载中..."));
 
-        QLabel *label=new QLabel(this);
-        label->setGeometry(0,0,500,500);
-        label->setPixmap(QPixmap::fromImage(*image));
-        //label->setPixmap(QPixmap("E:/Qt_Program/Chrysanthemum.jpg"));
-        label->show();
+        QGraphicsScene *scene = new QGraphicsScene;
+        scene->addPixmap(QPixmap::fromImage(*image));
+        ui->graphicsView->setScene(scene);
+        ui->graphicsView->resize(image->width() + 10, image->height() + 10);
+        resize(image->width() + 30,image->height() + 100);
+        ui->graphicsView->show();
+        //showImage(image);
 
-    //setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File loaded"), 2000);
+        statusBar()->showMessage(tr("加载完成"), 2000);
+    }else
+    {
+        statusBar()->showMessage(tr("加载失败"), 2000);
+    }
 }
 
-//void MainWindow::setCurrentFile(const QString &fileName)
-////! [46] //! [47]
+//void MainWindow::showImage(QImage *image)
 //{
-//    curFile = fileName;
-//    textEdit->document()->setModified(false);
-//    setWindowModified(false);
-
-//    QString shownName = curFile;
-//    if (curFile.isEmpty())
-//        shownName = "untitled.txt";
-//    setWindowFilePath(shownName);
+//    QGraphicsScene *scene = new QGraphicsScene;
+//    scene->addPixmap(QPixmap::fromImage(*image));
+//    ui->graphicsView->setScene(scene);
+//    ui->graphicsView->resize(image->width() + 10, image->height() + 10);
+//    resize(image->width() + 30,image->height() + 100);
+//    ui->graphicsView->show();
 //}
 
+//QImage *MainWindow::greyScale(QImage * origin){
+//    QImage * newImage = new QImage(origin->width(), origin->height(), QImage::Format_ARGB32);
 
-void MainWindow::createActions()
-{
+//    QRgb * line;
 
-    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    QToolBar *fileToolBar = addToolBar(tr("File"));
+//    for(int y = 0; y<newImage->height(); y++){
+//        QRgb * line = (QRgb *)origin->scanLine(y);
 
+//        for(int x = 0; x<newImage->width(); x++){
+//            int average = (qRed(line[x]) + qGreen(line[x]) + qRed(line[x]))/3;
+//            newImage->setPixel(x,y, qRgb(average, average, average));
+//        }
+//    }
 
-    //    const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
-    //    QAction *newAct = new QAction(newIcon, tr("&New"), this);
-    //    newAct->setShortcuts(QKeySequence::New);
-    //    newAct->setStatusTip(tr("Create a new file"));
-    //    //connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
-    //    fileMenu->addAction(newAct);
-    //    fileToolBar->addAction(newAct);
-
-
-    const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open_file_512px.png"));
-    QAction *openAct = new QAction(openIcon, tr("&Open..."), this);
-    openAct->setShortcuts(QKeySequence::Open);
-    openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, &QAction::triggered, this, &MainWindow::open);
-    fileMenu->addAction(openAct);
-    fileToolBar->addAction(openAct);
-
-
-    const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
-    QAction *saveAct = new QAction(saveIcon, tr("&Save"), this);
-    saveAct->setShortcuts(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save the document to disk"));
-    //connect(saveAct, &QAction::triggered, this, &MainWindow::save);
-    fileMenu->addAction(saveAct);
-    fileToolBar->addAction(saveAct);
-
-    const QIcon saveAsIcon = QIcon::fromTheme("document-save-as");
-    //QAction *saveAsAct = fileMenu->addAction(saveAsIcon, tr("Save &As..."), this, &MainWindow::saveAs);
-    //saveAsAct->setShortcuts(QKeySequence::SaveAs);
-    //saveAsAct->setStatusTip(tr("Save the document under a new name"));
-
-    //! [20]
-
-    fileMenu->addSeparator();
-
-    const QIcon exitIcon = QIcon::fromTheme("application-exit");
-    QAction *exitAct = fileMenu->addAction(exitIcon, tr("E&xit"), this, &QWidget::close);
-    exitAct->setShortcuts(QKeySequence::Quit);
-    //! [20]
-    exitAct->setStatusTip(tr("Exit the application"));
-
-    //! [21]
-    QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
-    QToolBar *editToolBar = addToolBar(tr("Edit"));
-    //!
-#ifndef QT_NO_CLIPBOARD
-    const QIcon cutIcon = QIcon::fromTheme("edit-cut", QIcon(":/images/cut.png"));
-    QAction *cutAct = new QAction(cutIcon, tr("Cu&t"), this);
-    //! [21]
-    cutAct->setShortcuts(QKeySequence::Cut);
-    cutAct->setStatusTip(tr("Cut the current selection's contents to the "
-                            "clipboard"));
-    //connect(cutAct, &QAction::triggered, textEdit, &QPlainTextEdit::cut);
-    editMenu->addAction(cutAct);
-    editToolBar->addAction(cutAct);
-
-    const QIcon copyIcon = QIcon::fromTheme("edit-copy", QIcon(":/images/copy.png"));
-    QAction *copyAct = new QAction(copyIcon, tr("&Copy"), this);
-    copyAct->setShortcuts(QKeySequence::Copy);
-    copyAct->setStatusTip(tr("Copy the current selection's contents to the "
-                             "clipboard"));
-    //connect(copyAct, &QAction::triggered, textEdit, &QPlainTextEdit::copy);
-    editMenu->addAction(copyAct);
-    editToolBar->addAction(copyAct);
-
-    const QIcon pasteIcon = QIcon::fromTheme("edit-paste", QIcon(":/images/paste.png"));
-    QAction *pasteAct = new QAction(pasteIcon, tr("&Paste"), this);
-    pasteAct->setShortcuts(QKeySequence::Paste);
-    pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
-                              "selection"));
-    //connect(pasteAct, &QAction::triggered, textEdit, &QPlainTextEdit::paste);
-    editMenu->addAction(pasteAct);
-    editToolBar->addAction(pasteAct);
-
-    menuBar()->addSeparator();
-
-#endif // !QT_NO_CLIPBOARD
-
-    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
-    //QAction *aboutAct = helpMenu->addAction(tr("&About"), this, &MainWindow::about);
-    //aboutAct->setStatusTip(tr("Show the application's About box"));
-
-    //! [22]
-
-    QAction *aboutQtAct = helpMenu->addAction(tr("About &Qt"), qApp, &QApplication::aboutQt);
-    aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
-    //! [22]
-
-    //! [23]
-#ifndef QT_NO_CLIPBOARD
-    cutAct->setEnabled(false);
-    //! [23] //! [24]
-    copyAct->setEnabled(false);
-    //connect(textEdit, &QPlainTextEdit::copyAvailable, cutAct, &QAction::setEnabled);
-    //connect(textEdit, &QPlainTextEdit::copyAvailable, copyAct, &QAction::setEnabled);
-#endif // !QT_NO_CLIPBOARD
-}
+//    return newImage;
+//}

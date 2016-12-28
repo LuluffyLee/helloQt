@@ -25,13 +25,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    logindlg.cpp
+    logindlg.cpp \
+    processresultdlg.cpp
 
 HEADERS  += mainwindow.h \
-    logindlg.h
+    logindlg.h \
+    processresultdlg.h
 
 FORMS    += mainwindow.ui \
-    logindlg.ui
+    logindlg.ui \
+    processresultdlg.ui
 
 RESOURCES += \
     myresources.qrc
